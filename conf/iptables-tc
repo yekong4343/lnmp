@@ -1,0 +1,55 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
+-A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
+-A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
+-A INPUT -p tcp --tcp-flags ACK,FIN FIN -j DROP
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+
+#nginx
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 8111 -j ACCEPT
+#ssh
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+#squid
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 9891 -j ACCEPT
+
+#40独有====
+#memcache 弹窗主控负载IP变动时需要修改下面规则
+#14
+-A INPUT -m state --state NEW -m tcp -p tcp -s 113.107.180.14 --dport 11211 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp -s 112.90.25.14 --dport 11211 -j ACCEPT
+#42
+-A INPUT -m state --state NEW -m tcp -p tcp -s 183.60.40.42 --dport 11211 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp -s 120.31.54.170 --dport 11211 -j ACCEPT
+#70
+-A INPUT -m state --state NEW -m tcp -p tcp -s 113.105.248.70 --dport 11211 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp -s 120.31.50.70 --dport 11211 -j ACCEPT
+#====40独有
+
+#42独有====
+#mysql 
+-A INPUT -p tcp -s 183.61.71.102 --dport 3307 -j ACCEPT
+-A INPUT -p tcp -s 125.64.92.187 --dport 3307 -j ACCEPT
+-A INPUT -p tcp -s 183.60.44.100 --dport 3307 -j ACCEPT
+#====42独有
+
+#监控
+#134
+-A INPUT -s 113.107.95.134 -p udp --dport 161 -j ACCEPT
+-A INPUT -s 112.90.26.134 -p udp --dport 161 -j ACCEPT
+-A INPUT -s 113.107.95.134 -p tcp --dport 5666 -j ACCEPT
+-A INPUT -s 112.90.26.134 -p tcp --dport 5666 -j ACCEPT
+#jiankongbao
+-A INPUT -s 60.195.252.107 -p udp --dport 161 -j ACCEPT
+-A INPUT -s 60.195.252.110 -p udp --dport 161 -j ACCEPT
+-A INPUT -s 60.195.252.107 -p tcp --dport 3306 -j ACCEPT
+-A INPUT -s 60.195.252.110 -p tcp --dport 3306 -j ACCEPT
+
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT

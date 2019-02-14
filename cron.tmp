@@ -1,0 +1,3 @@
+*/30 * * * *		ntpdate time.windows.com
+*/2 * * * *		/opt/9377_serv/nginx_fpm_check.sh
+0 0 */1 * *		/opt/9377_serv/cronlog.sh
